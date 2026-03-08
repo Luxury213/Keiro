@@ -3,9 +3,12 @@ package com.keiro.keiro_backend.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -53,9 +56,10 @@ public class Card {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "topic_id", nullable = false)
-    private Topic topic;
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "topic_id")
+@JsonIgnoreProperties({"cards", "user", "hibernateLazyInitializer", "handler"})
+private Topic topic;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     private List<StudySession> sessions;

@@ -1,11 +1,14 @@
 package com.keiro.keiro_backend.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,6 +24,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "users")
 @Data
@@ -45,8 +49,9 @@ public class User implements UserDetails {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Topic> topics;
+@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+@JsonIgnoreProperties("user")
+private List<Topic> topics = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -83,6 +88,10 @@ public class User implements UserDetails {
     public boolean isCredentialsNonExpired() {
         return true;
     }
+
+    public String getDisplayUsername() {
+    return username;
+}
 
     @Override
     public boolean isEnabled() {

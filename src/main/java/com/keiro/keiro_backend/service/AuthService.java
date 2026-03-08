@@ -24,17 +24,14 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest request) {
-        // Verificar si el email ya existe
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("El email ya está registrado");
         }
 
-        // Verificar si el username ya existe
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("El nombre de usuario ya está en uso");
         }
 
-        // Crear el usuario
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
@@ -43,18 +40,17 @@ public class AuthService {
 
         userRepository.save(user);
 
-        // Generar token
         String token = jwtService.generateToken(user);
 
         return AuthResponse.builder()
                 .token(token)
-                .username(user.getUsername())
+                .username(user.getDisplayUsername())
                 .email(user.getEmail())
+                .id(user.getId())
                 .build();
     }
 
     public AuthResponse login(LoginRequest request) {
-        // Verificar email y password
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -62,7 +58,6 @@ public class AuthService {
                 )
         );
 
-        // Si llegó aquí es porque las credenciales son correctas
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -70,8 +65,9 @@ public class AuthService {
 
         return AuthResponse.builder()
                 .token(token)
-                .username(user.getUsername())
+                .username(user.getDisplayUsername())
                 .email(user.getEmail())
+                .id(user.getId())
                 .build();
     }
 }
