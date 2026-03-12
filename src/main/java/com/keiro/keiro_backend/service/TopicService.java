@@ -67,4 +67,12 @@ public class TopicService {
 
         topicRepository.delete(topic);
     }
+
+    public Topic updateTopic(Long id, TopicRequest request) {
+    Topic topic = topicRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Topic no encontrado"));
+    topic.setName(request.getName());
+    topic.setDescription(request.getDescription());
+    return topicRepository.save(topic);
+}
 }

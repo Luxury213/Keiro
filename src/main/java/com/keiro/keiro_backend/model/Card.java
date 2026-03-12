@@ -34,11 +34,11 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String question;
+@Column(columnDefinition = "TEXT")
+private String question;
 
-    @Column(nullable = false)
-    private String answer;
+@Column(columnDefinition = "TEXT")
+private String answer;
 
     // Campos del algoritmo SM-2
     @Builder.Default
